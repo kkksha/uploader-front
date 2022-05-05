@@ -20,9 +20,9 @@ const MainPage = () => {
     const [staticContent, setStaticContent] = useState<IDtoStatic[]>([]);
     const [panel, setPanel] = useState("Audio")
     useEffect(() => {
-        axios.get("").then((response) => {
+/*        axios.get("").then((response) => {
             setStaticContent(response.data.content)
-        })
+        })*/
     }, [])
     return (
         <Layout>

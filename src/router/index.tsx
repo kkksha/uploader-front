@@ -1,36 +1,48 @@
-import React, { useEffect } from 'react';
+import { useTypedSelector } from 'hooks/useTypedSelector';
+import React, { useEffect, useState } from 'react';
 import {Route, Routes} from "react-router-dom";
 import Main from "../pages/main";
-import { loginActionDispatch } from '../store/actions/loginAction';
-import {useDispatch, useSelector } from 'react-redux';
+import {useActions} from "../hooks/useActions";
+import Auth from "../pages/auth/Auth";
 const Router = ():JSX.Element => {
 
-    // @ts-ignore
-    const user = useSelector(state => state.user.user);
-    const dispatch = useDispatch();
+    const [loading, setLoading] = useState(false);
+    const {user} = useTypedSelector(state => {
+        return ({
+            user: state.user.user
+        })
+    });
+    const {getUserData} = useActions();
+
 
     useEffect(() => {
-        if (localStorage.token){
-            // @ts-ignore
-            dispatch(loginActionDispatch(localStorage.token))
-        }
+        setLoading(true);
 
-    }, [])
-    if (user) {
-        return (
-            <Routes>
-                <Route path={"/"} element={<Main/>}/>
-                {/*        <Route path={"*"} element={<Profile/>}/>*/}
-            </Routes>
-        );
-    } else {
-        return (
-            <Routes>
-                <Route path={"/"} element={<Main/>}/>
-                {/*           <Route path={"*"} element={<Auth/>}/>*/}
-            </Routes>
-        );
-    }
+        Promise.all([
+            getUserData(),
+        ]).then(() => {
+
+            setLoading(false);
+        })
+    }, []);
+
+    return (
+        <>
+            {
+                !user ? <>
+                    <Routes>
+                        <Route path={"/"} element={<Auth/>}/>
+                        <Route path={"*"} element={<Auth/>}/>
+                    </Routes>
+                </>: <>
+                    <Routes>
+                        <Route path={"/"} element={<Main/>}/>
+                        <Route path={"*"} element={<Main/>}/>
+                    </Routes>
+                </>
+            }
+        </>
+    )
 };
 
 export default Router;

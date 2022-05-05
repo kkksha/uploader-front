@@ -1,8 +1,8 @@
 import React, {useState} from 'react';
 import styled from "styled-components";
 import {useDispatch} from "react-redux";
-import {authActionDispatch} from "../../store/actions/loginAction";
 import {useNavigate} from 'react-router-dom'
+import {useActions} from "../../hooks/useActions";
 
 interface IDtoStatic {
     email: string,
@@ -15,10 +15,11 @@ const Auth = () => {
     const navigate = useNavigate();
     const [email, setMail] = useState('');
     const [password, setPassword] = useState('');
-
+    const {userLogin} = useActions();
 
     const sendData = ({email, password}: IDtoStatic) => {
-        dispatch(authActionDispatch({email, password}))
+
+            userLogin({email, password});
     }
 
 
@@ -33,9 +34,11 @@ const Auth = () => {
             <Input type="password" id="password" name="password" onChange={(event) => {
                 setPassword(event.target.value)
             }}/>
-            <Button type="submit" value="Submit" onClick={() => {
+            <Button onClick={() => {
                 sendData({email, password})
-            }}/>
+            }}>
+                LOGIn
+            </Button>
         </Wrapper>
     );
 };
@@ -52,7 +55,7 @@ const Title = styled.h1`
 const Input = styled.input`
   width: 200px;
 `
-const Button = styled.input`
+const Button = styled.button`
   border-radius: 6px;
   width: 100px;
   height: 30px;
